@@ -1,0 +1,315 @@
+" vim: set foldmethod=marker foldlevel=0:
+" =============================================================================
+" ~/.vimrc
+" --------
+" Configurations for Vim
+" =============================================================================
+
+if &compatible
+  set nocompatible
+endif
+
+" Enable filetype detection and the loading of plugins/indent files
+filetype plugin indent on
+  
+" =============================================================================
+" VIM DEFAULT SETTINGS {{{
+" =============================================================================
+" -----------------------------------------------------------------------------
+" USER INTERFACE {{{
+" -----------------------------------------------------------------------------
+" Enable true color support
+if has('termguicolors')
+  set termguicolors
+endif
+
+if $TERM ==# 'screen-256color'
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+
+" Always display statusline
+set laststatus=2
+
+" Always show cursor position
+set ruler
+
+" Highlight line currently under cursor
+set cursorline
+
+" Show line numbers
+set number
+
+" Set column highlight at 80 char
+set colorcolumn=80
+
+" Split window to the right or below the current window
+set splitright
+set splitbelow
+
+" Hide modified buffers in background (instead of closing them)
+set hidden
+
+" Set max number of tabs
+if &tabpagemax < 20
+    set tabpagemax=20
+endif
+
+" Disable bells (beep/flash)
+set noerrorbells visualbell t_vb=
+
+" }}}
+
+" -----------------------------------------------------------------------------
+" INDENTATION {{{
+" -----------------------------------------------------------------------------
+" New lines inherit indentation of previous lines
+set autoindent
+
+" Convert tabs to spaces
+set expandtab
+
+" Insert `tabstop` number of space on tab
+set smarttab
+
+" Set default indent width to 2 columns
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+  
+" }}}
+
+" -----------------------------------------------------------------------------
+" TEXT RENDERING {{{
+" -----------------------------------------------------------------------------
+" Enable syntax highlighting
+syntax on
+
+" Set default unicode encoding
+set encoding=utf-8
+
+" Set standard filetype
+set ffs=unix,dos,mac
+
+" Show as many lines as possible
+set display+=lastline
+
+" Always show line(s) above/below cursor
+if !&scrolloff
+    set scrolloff=1
+endif
+if !&sidescrolloff
+    set sidescrolloff=5
+endif
+
+" Avoid wrapping line in middle of a word
+set linebreak
+
+" Show matching brackets
+set showmatch
+
+" }}}
+
+" -----------------------------------------------------------------------------
+" SEARCH & COMPLETION {{{
+" -----------------------------------------------------------------------------
+" Start incremental searching before <RETURN>
+set incsearch
+
+" Enable search highlighting
+set hlsearch
+
+" Auto switch search to case-sensitive upon UPPERCASE letter
+set smartcase
+
+" Remember 1000 search history and command entries
+set history=1000
+
+" Set larger (1000 levels) undo buffer
+set undolevels=1000
+
+" Limit files searched for auto-complete (<CTRL>-P);
+" `i` specifies current files
+set complete-=i
+
+" Enable menu command-line <TAB> completion options
+set wildmenu
+" Display vertical wildmenu
+set wildoptions=pum
+" Set wildmenu behavior
+"set wildmode=list:full
+
+" Ignore some file extensions with <TAB> completion
+set wildignore=*.swp,*.bak
+set wildignore+=*.pyc,*.class,*.cache,*.dll,*.pdb,*.min.*
+set wildignore+=*/.git/**/*,*/.hg/**/*,*/.svn/**/*
+set wildignore+=tags
+set wildignore+=*.tar.*,*.rar,*.zip
+set wildignorecase
+
+" }}}
+
+" -----------------------------------------------------------------------------
+" MISCELLAENOUS {{{
+" -----------------------------------------------------------------------------
+" Auto change working directory to inherit from current file
+" Alternative to setting: `set autochdir`
+"autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
+
+" Auto read file again if changed outside of vim
+set autoread
+autocmd FocusGained,BufEnter * checktime
+
+" Enable backspace in insert-mode
+set backspace=indent,eol,start
+
+" Do not update screen during micro/script execution (for performance)
+set lazyredraw
+
+" Do not store current options in session.
+set sessionoptions-=options
+
+" Do timeout on terminal key codes.
+set ttimeout
+" Timeout after 100ms.
+set ttimeoutlen=100
+
+" Makes :set list (visible whitespace) prettier
+if &listchars ==# 'eol:$'
+  set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+endif
+
+"" Enable code folding.
+"augroup vimrc
+"  au BufReadPre * setlocal foldmethod=indent
+"  au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
+"augroup END
+"set foldlevel=99
+
+" }}}
+
+" }}}
+
+" =============================================================================
+" KEY MAPPINGS {{{
+" =============================================================================
+" Remap <Leader> key from '\' to ','
+let mapleader=','
+
+" Remap <ESC> key to exit from insert mode
+inoremap jk <ESC>
+
+" List all buffers
+nnoremap <leader>b :ls<CR>:buffer<Space>
+
+" Open buffer (options in wildmenu) in the current window or split window
+"set wildcharm=<C-z>
+"nnoremap <leader>b :buffer <C-z><S-Tab>
+"nnoremap <leader>bv :vert sbuffer <C-z><S-Tab>
+
+" :bd[elete] - delete current buffer and close current window
+nnoremap <silent> <leader>q :bdelete<CR>
+" :clo[se] - close current window but keep buffer open; fails with one window
+nnoremap <silent> <leader>c :close<CR>
+" :on[ly] - close all other windows except current (keeps all buffers open)
+nnoremap <silent> <leader>o :only<CR>
+
+" Copy and paste to primary system clipboard (register *)
+vnoremap <leader>y "*y
+noremap <leader>p "*p
+
+" Show whitespace visual marking
+nnoremap <silent> <F4> :<C-U>setlocal lcs=tab:>-,trail:-,eol:$ list! list?<CR>
+
+" Remove all trailing whitespace
+nnoremap <silent> <F5> :let _s=@/<Bar>:%s/\s\+$//e<Bar>:let @/=_s<Bar><CR>
+
+" Avoid accidental delete <C-U> (cannot recover with undo)
+inoremap <C-U> <C-G>u<C-U>
+inoremap <C-W> <C-G>u<C-W>
+" <C-W> to delete previous word; <C-U> to delete line; <C-Y> to paste deleted
+inoremap <silent> <C-W> <C-\><C-O>db
+inoremap <silent> <C-U> <C-\><C-O>d0
+inoremap <silent> <C-Y> <C-R>"
+
+" Use <C-L> to clear the highlighting of :set hlsearch
+if maparg('<C-L>', 'n') ==# ''
+  nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
+endif
+
+" }}}
+
+" =============================================================================
+" COMMANDS & FUNCTIONS {{{
+" =============================================================================
+" Run UNIX commands without the prompt popping up.
+command! -nargs=1 RunSilent
+  \ | execute ':silent !'.<q-args>
+  \ | execute ':redraw!'
+
+" Open help window in vertical split
+command -nargs=1 -complete=help H vert help <args>
+
+" Open existing file in new tab
+command -nargs=1 -complete=file TT tabfind <args>
+" Create and open new file in new tab
+command -nargs=1 -complete=file TN tabnew <args>
+
+" Return indent (all whitespace at start of a line), converted from
+" tabs to spaces if `tabs = 1`, or from spaces to tabs otherwise.
+" When converting to tabs, result has no redundant spaces.
+function! Indenting(indent, tabs, cols)
+  let spccol = repeat(' ', a:cols)
+  let result = substitute(a:indent, spccol, '\t', 'g')
+  let result = substitute(result, ' \+\ze\t', '', 'g')
+  if a:tabs == 1
+    let result = substitute(result, '\t', spccol, 'g')
+  endif
+  return result
+endfunction
+
+" Converts whitespace used for indenting (before first non-whitespace).
+" `tabs = 0`: convert spaces to tabs
+" `tabs = 1`: convert tabs to spaces
+" `cols` = string with number of columns per tab, or empty to use 'tabstop'
+function! IndentConvert(line1, line2, tabs, cols)
+  let savepos = getpos('.')
+  let cols = empty(a:cols) ? &tabstop : a:cols
+  execute a:line1 . ',' . a:line2 . 's/^\s\+/\=Indenting(submatch(0), a:tabs, cols)/e'
+  call histdel('search', -1)
+  call setpos('.', savepos)
+endfunction
+
+command! -nargs=? -range=% Space2Tab call IndentConvert(<line1>,<line2>,0,<q-args>)
+command! -nargs=? -range=% Tab2Space call IndentConvert(<line1>,<line2>,1,<q-args>)
+command! -nargs=? -range=% RetabIndent call IndentConvert(<line1>,<line2>,&et,<q-args>)
+
+" Show diff between current buffer and original (saved) version.
+function! s:DiffWithSaved()
+  let filetype=&ft
+  diffthis
+  vnew | r # | normal! 1Gdd
+  diffthis
+  exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
+endfunction
+command! Diffbuf call s:DiffWithSaved()
+
+" }}}
+
+" =============================================================================
+" COLORSCHEMES {{{
+" =============================================================================
+" Load built-in colorscheme
+set background=dark
+colorscheme retrobox
+
+" }}}
+
+" =============================================================================
+" PLUGINS {{{
+" =============================================================================
+" Load built-in plugin: matchit
+" Enable extended '%' matching
+packadd! matchit
+
+" }}}
