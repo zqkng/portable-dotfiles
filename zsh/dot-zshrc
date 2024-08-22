@@ -1,0 +1,23 @@
+###############################################################################
+# ~/.zshrc
+# --------
+# Configurations read by zsh(1) when starting as an interactive shell;
+# executed after `~/.zprofile`.
+#
+###############################################################################
+
+# Load .zshrc shell configurations:
+#   - aliases, bindkey, completions, functions, options, prompt
+() { for _config (${ZDOTDIR:-$HOME}/.zsh/zshrc.d/*.zsh) source ${_config} }
+
+# Load OS-specific .zshrc configurations
+#source "${ZDOTDIR:-$HOME}/.zsh/zshrc.d/zshrc-$(uname)"
+case "$OSTYPE" in
+    darwin*)
+        source "${ZDOTDIR:-$HOME}/.zsh/zshrc.d/zshrc-Darwin"
+    ;;
+    linux*)
+        source "${ZDOTDIR:-$HOME}/.zsh/zshrc.d/zshrc-Linux"
+    ;;
+esac
+

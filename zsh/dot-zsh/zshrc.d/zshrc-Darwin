@@ -1,0 +1,11 @@
+###############################################################################
+# ~/.zsh/zshrc.d/zshrc-Darwin
+# ---------------------------
+# Sets interactive shell configurations, aliases, and functions 
+# that are specific to macOS.
+#
+###############################################################################
+
+# Load ssh-agent on startup
+eval $(ssh-agent)
+

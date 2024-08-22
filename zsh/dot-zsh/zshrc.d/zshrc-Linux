@@ -1,0 +1,13 @@
+###############################################################################
+# ~/.zsh/zshrc.d/zshrc-Linux
+# --------------------------
+# Sets interactive shell configurations, aliases, and functions
+# that are specific to Linux.
+#
+###############################################################################
+
+# Enable color support for GNU `ls`
+alias ls="ls --color=auto"
+
+# Enable color support for GNU `diff`
+alias diff="diff -u --color=auto"
